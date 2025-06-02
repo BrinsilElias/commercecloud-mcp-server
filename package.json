@@ -1,0 +1,40 @@
+{
+  "name": "commercecloud-mcp-server",
+  "version": "0.0.0",
+  "description": "Commerce Cloud MCP Server",
+  "author": "Brinsil Elias",
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "exports": {
+    "require": "./dist/index.js",
+    "import": "./dist/index.mjs"
+  },
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build-fast": "tsup src/index.ts --format esm",
+    "build": "npm run build-fast -- --dts-resolve",
+    "test": "vitest run",
+    "prepublishOnly": "npm run build"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@egoist/prettier-config": "1.0.0",
+    "prettier": "3.5.3",
+    "tsup": "8.5.0",
+    "typescript": "5.8.3",
+    "vitest": "3.1.4"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.0",
+    "@types/node": "^22.15.24",
+    "dotenv": "^16.5.0",
+    "zod": "^3.25.34"
+  }
+}

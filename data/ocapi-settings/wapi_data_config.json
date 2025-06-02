@@ -1,0 +1,75 @@
+{
+	"_v": "24.5",
+	"clients": [
+		{
+			"client_id": "CLIENT_ID",
+			"resources": [
+				{
+					"resource_id": "/sites/*/custom_objects/*/*",
+					"methods": [
+						"put",
+						"get",
+						"patch",
+						"delete"
+					],
+					"read_attributes": "(**)",
+					"write_attributes": "(**)"
+				},
+				{
+					"resource_id": "/custom_objects_search/**",
+					"methods": [
+						"post"
+					],
+					"read_attributes": "(**)",
+					"write_attributes": "(**)"
+				},
+				{
+					"resource_id": "/sites/*/promotions/**",
+					"methods": [
+						"put",
+						"get",
+						"patch"
+					],
+					"read_attributes": "(**)",
+					"write_attributes": "(**)"
+				},
+				{
+					"resource_id": "/products/**",
+					"methods": [
+						"put",
+						"get",
+						"patch"
+					],
+					"read_attributes": "(**)",
+					"write_attributes": "(**)"
+				},
+				{
+					"resource_id": "/product_search",
+					"methods": [
+						"post"
+					],
+					"read_attributes": "(**)",
+					"write_attributes": "(**)"
+				},
+				{
+					"resource_id": "/category_search",
+					"methods": [
+						"post"
+					],
+					"read_attributes": "(**)",
+					"write_attributes": "(**)"
+				},
+				{
+					"resource_id": "/libraries/**/content/**",
+					"methods": [
+						"put",
+						"get",
+						"patch"
+					],
+					"read_attributes": "(**)",
+					"write_attributes": "(**)"
+				}
+			]
+		}
+	]
+}
