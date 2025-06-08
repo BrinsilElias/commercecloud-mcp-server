@@ -1,21 +1,51 @@
+import { searchSchema, updateProductByIdSchema } from "./schema"
 import { ocapi } from "../../services/ocapi"
 import { DATA_API_TYPE } from "../../utils/constants"
+import { ServerToolDefinition } from "../../utils/types"
 
-export const updateProduct = async (
-  productId: string,
-  product: Record<string, any>,
-) => {
-  const body = product ? { ...product } : {}
-  const response = await ocapi.patch(DATA_API_TYPE, `/products/${productId}`, {
-    body,
-  })
-  return response
+export const productSearch: ServerToolDefinition = {
+  toolName: "product-search",
+  toolDescription:
+    "Searches for products using the SFCC OCAI - Data API " +
+    "This requires the search query to be provided as an input " +
+    "Additional options can be provided to filter the search results",
+  toolSchema: searchSchema.shape,
+  toolHandler: async (options: Record<string, any>) => {
+    const body = options ? { ...options } : {}
+    const response = await ocapi.post(DATA_API_TYPE, `/product_search`, {
+      body,
+    })
+    return {
+      content: [
+        {
+          type: "text",
+          text: JSON.stringify(response, null, 2),
+        },
+      ],
+    }
+  },
 }
 
-export const productSearch = async (options?: Record<string, any>) => {
-  const body = options ? { ...options } : {}
-  const response = await ocapi.post(DATA_API_TYPE, `/product_search`, {
-    body,
-  })
-  return response
+export const updateProductById: ServerToolDefinition = {
+  toolName: "update-product-by-id",
+  toolDescription:
+    "Updates a product by its id using the SFCC OCAI - Data API " +
+    "This requires the product id to be provided as an input " +
+    "The product to update needs to be provided as an input",
+  toolSchema: updateProductByIdSchema.shape,
+  toolHandler: async ({
+    id,
+    product,
+  }: {
+    id: string
+    product: Record<string, any>
+  }) => {
+    const body = product ? { ...product } : {}
+    const response = await ocapi.patch(DATA_API_TYPE, `/products/${id}`, {
+      body,
+    })
+    return {
+      content: [{ type: "text", text: JSON.stringify(response, null, 2) }],
+    }
+  },
 }

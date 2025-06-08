@@ -20,7 +20,6 @@
   "scripts": {
     "build-fast": "tsup src/index.ts --format esm",
     "build": "npm run build-fast -- --dts-resolve",
-    "test": "vitest run",
     "prepublishOnly": "npm run build"
   },
   "license": "MIT",
@@ -28,8 +27,7 @@
     "@egoist/prettier-config": "1.0.0",
     "prettier": "3.5.3",
     "tsup": "8.5.0",
-    "typescript": "5.8.3",
-    "vitest": "3.1.4"
+    "typescript": "5.8.3"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.12.0",

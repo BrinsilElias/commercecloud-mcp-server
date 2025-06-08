@@ -4,10 +4,11 @@ A server that helps connect your AI applications with Salesforce Commerce Cloud.
 
 ## ✨ Features
 
-- 🔌 Uses OCAPI to connect to Salesforce Commerce Cloud instance
-- 🛠️ Built with MCP TypeScript SDK
-- ✅ Vitest for unit testing
-- ⚙️ Environment-based configuration using .env file
+- 🛍️ Product management and updates
+- 📊 Order analysis and insights
+- 🗂️ Custom object operations
+- 📄 Content asset management
+- ⚙️ Environment-based configuration
 
 ## 🔄 Flow Diagram
 
