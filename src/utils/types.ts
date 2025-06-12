@@ -14,10 +14,3 @@ export interface OcapiRequestOptions {
     grantType: GrantType
   }
 }
-
-export interface ServerToolDefinition {
-  toolName: string
-  toolDescription: string
-  toolSchema: Record<string, any>
-  toolHandler: any
-}

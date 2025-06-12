@@ -8,19 +8,30 @@ import {
   getCustomerBasketById,
   getCustomerOrderById,
 } from "./customers"
-import { ServerToolDefinition } from "../../utils/types"
+import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp"
 
-export const shopApi: Record<string, ServerToolDefinition> = {
-  getProductById,
-  getProductsByIds,
-  orderSearch,
-  getOrderById,
-  getContentsByIds,
-  contentSearch,
-  getCustomerById,
-  getCustomerBasketById,
-  getCustomerOrderById,
-  getBasketById,
-  getCategoryById,
-  getCategoriesByIds,
+export const registerShopApiTools = (server: McpServer) => {
+  // Products API
+  getProductById(server)
+  getProductsByIds(server)
+
+  // Orders API
+  orderSearch(server)
+  getOrderById(server)
+
+  // Content API
+  getContentsByIds(server)
+  contentSearch(server)
+
+  // Customers API
+  getCustomerById(server)
+  getCustomerBasketById(server)
+  getCustomerOrderById(server)
+
+  // Baskets API
+  getBasketById(server)
+
+  // Categories API
+  getCategoryById(server)
+  getCategoriesByIds(server)
 }

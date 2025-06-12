@@ -13,16 +13,6 @@ const tokenCache: Record<GrantType, TokenCache | null> = {
 
 const TOKEN_BUFFER_TIME = 5 * 60 * 1000 // 5 minutes in milliseconds
 
-export class AuthenticationError extends Error {
-  constructor(
-    message: string,
-    public readonly cause?: unknown,
-  ) {
-    super(message)
-    this.name = "AuthenticationError"
-  }
-}
-
 const isTokenValid = (cache: TokenCache | null): boolean => {
   if (!cache) return false
   return Date.now() < cache.expiresAt - TOKEN_BUFFER_TIME
@@ -43,7 +33,6 @@ export const createOAuthToken = async (
   const {
     SFCC_CLIENT_ID,
     SFCC_CLIENT_PASSWORD,
-    SFCC_OAUTH_URL,
     SFCC_INSTANCE_URL,
     SFCC_BM_USER_ID,
     SFCC_BM_USER_SECURITY_TOKEN,
@@ -52,7 +41,9 @@ export const createOAuthToken = async (
   try {
     switch (grantType) {
       case "client_credentials":
-        baseUrl = new URL(SFCC_OAUTH_URL)
+        baseUrl = new URL(
+          "https://account.demandware.com/dwsso/oauth2/access_token",
+        )
         credentials = Buffer.from(
           `${SFCC_CLIENT_ID}:${SFCC_CLIENT_PASSWORD}`,
         ).toString("base64")
@@ -81,11 +72,12 @@ export const createOAuthToken = async (
     })
 
     if (!response.ok) {
-      const error = await response.json()
-      throw new AuthenticationError(
-        `Failed to create OAuth token: ${response.status}`,
-        error,
+      console.error(
+        "Failed to fetch OAuth token",
+        response.status,
+        response.statusText,
       )
+      return ""
     }
 
     const data = await response.json()
@@ -97,10 +89,8 @@ export const createOAuthToken = async (
     }
 
     return data.access_token
-  } catch (error) {
-    if (error instanceof AuthenticationError) {
-      throw error
-    }
-    throw new AuthenticationError("Failed to create OAuth token", error)
+  } catch {
+    console.error("Failed to create OAuth token")
+    return ""
   }
 }
