@@ -1,7 +1,7 @@
 import { ocapi } from "../../services/ocapi"
 import { SHOP_API_TYPE } from "../../utils/constants"
 import { getBasketByIdSchema } from "./schema"
-import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp"
+import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js"
 
 export const getBasketById = (server: McpServer) => {
   server.tool(

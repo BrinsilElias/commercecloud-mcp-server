@@ -1,7 +1,7 @@
 import { ocapi } from "../../services/ocapi"
 import { DATA_API_TYPE } from "../../utils/constants"
 import { getContentByIdSchema, updateContentByIdSchema } from "./schema"
-import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp"
+import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js"
 
 export const getContentById = (server: McpServer) => {
   server.tool(

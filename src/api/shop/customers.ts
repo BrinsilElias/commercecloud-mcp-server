@@ -1,6 +1,6 @@
 import { ocapi } from "../../services/ocapi"
 import { SHOP_API_TYPE } from "../../utils/constants"
-import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp"
+import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js"
 import {
   getCustomerByIdSchema,
   getCustomerBasketByIdSchema,

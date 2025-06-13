@@ -8,7 +8,7 @@ import {
   getCustomerBasketById,
   getCustomerOrderById,
 } from "./customers"
-import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp"
+import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js"
 
 export const registerShopApiTools = (server: McpServer) => {
   // Products API

@@ -1,0 +1,32 @@
+name = "commerce-cloud-mcp-server"
+main = "src/index.ts"
+compatibility_date = "2025-06-08"
+compatibility_flags = ["nodejs_compat"]
+
+[observability]
+enabled = true
+
+# Durable Objects
+[[durable_objects.bindings]]
+name = "MCP_OBJECT"
+class_name = "CommerceCloudMCP"
+
+# Migrations
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["CommerceCloudMCP"]
+
+[vars]
+SFCC_INSTANCE_URL = "https://zzra-078.dx.commercecloud.salesforce.com"
+SFCC_SITE_ID = "RefArch"
+SFCC_VERSION = "v25_6"
+SFCC_BM_USER_ID = "brinsil.saju@tryzens.com"
+SFCC_CLIENT_ID = "aeb8b4af-749b-488d-94be-d5c85fab699c"
+
+# wrangler secret put SFCC_CLIENT_SECRET
+# wrangler secret put SFCC_BM_USER_SECURITY_TOKEN
+
+# R2 bucket for MCP server resources
+[[r2_buckets]]
+binding = "MCP_RESOURCES"
+bucket_name = "commerce-cloud-mcp-resources"

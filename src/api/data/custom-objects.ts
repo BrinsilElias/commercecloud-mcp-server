@@ -6,7 +6,7 @@ import {
   createOrUpdateCustomObjectSchema,
   customObjectSearchSchema,
 } from "./schema"
-import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp"
+import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js"
 
 const { SFCC_SITE_ID } = env
 

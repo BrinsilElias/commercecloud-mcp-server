@@ -12,7 +12,7 @@ import {
   getCustomerListById,
   getCustomerByCustomerNumber,
 } from "./customer-lists"
-import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp"
+import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js"
 
 export const registerDataApiTools = (server: McpServer) => {
   // Categories API
