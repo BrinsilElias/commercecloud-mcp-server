@@ -14,3 +14,10 @@ export interface OcapiRequestOptions {
     grantType: GrantType
   }
 }
+
+export interface OAuthTokenResponse {
+  access_token: string
+  scope: string
+  token_type: string
+  expires_in: number
+}

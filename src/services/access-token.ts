@@ -1,5 +1,5 @@
 import { env } from "../utils/env"
-import type { GrantType } from "../utils/types"
+import type { GrantType, OAuthTokenResponse } from "../utils/types"
 
 interface TokenCache {
   token: string
@@ -32,7 +32,7 @@ export const createOAuthToken = async (
 
   const {
     SFCC_CLIENT_ID,
-    SFCC_CLIENT_PASSWORD,
+    SFCC_CLIENT_SECRET,
     SFCC_INSTANCE_URL,
     SFCC_BM_USER_ID,
     SFCC_BM_USER_SECURITY_TOKEN,
@@ -45,7 +45,7 @@ export const createOAuthToken = async (
           "https://account.demandware.com/dwsso/oauth2/access_token",
         )
         credentials = Buffer.from(
-          `${SFCC_CLIENT_ID}:${SFCC_CLIENT_PASSWORD}`,
+          `${SFCC_CLIENT_ID}:${SFCC_CLIENT_SECRET}`,
         ).toString("base64")
         body = new URLSearchParams({ grant_type: "client_credentials" })
         break
@@ -53,7 +53,7 @@ export const createOAuthToken = async (
         baseUrl = new URL(`${SFCC_INSTANCE_URL}/dw/oauth2/access_token`)
         baseUrl.searchParams.append("client_id", SFCC_CLIENT_ID)
         credentials = Buffer.from(
-          `${SFCC_BM_USER_ID}:${SFCC_BM_USER_SECURITY_TOKEN}:${SFCC_CLIENT_PASSWORD}`,
+          `${SFCC_BM_USER_ID}:${SFCC_BM_USER_SECURITY_TOKEN}:${SFCC_CLIENT_SECRET}`,
         ).toString("base64")
         body = new URLSearchParams({
           grant_type:
@@ -80,7 +80,7 @@ export const createOAuthToken = async (
       return ""
     }
 
-    const data = await response.json()
+    const data = (await response.json()) as OAuthTokenResponse
 
     // Cache the token with expiration
     tokenCache[grantType] = {

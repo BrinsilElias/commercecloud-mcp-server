@@ -1,7 +1,7 @@
 import { searchSchema, updateProductByIdSchema } from "./schema"
 import { ocapi } from "../../services/ocapi"
 import { DATA_API_TYPE } from "../../utils/constants"
-import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp"
+import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js"
 
 export const productSearch = (server: McpServer) => {
   server.tool(

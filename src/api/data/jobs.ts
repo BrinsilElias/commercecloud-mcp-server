@@ -1,7 +1,7 @@
 import { ocapi } from "../../services/ocapi"
 import { DATA_API_TYPE } from "../../utils/constants"
 import { searchSchema } from "./schema"
-import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp"
+import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js"
 
 export const jobExecutionSearch = (server: McpServer) => {
   server.tool(

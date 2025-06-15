@@ -5,3 +5,5 @@ node_modules
 dist
 *.log
 .env
+.dev.vars
+.wrangler/

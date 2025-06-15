@@ -4,7 +4,7 @@ import {
   getCustomerByCustomerNumberSchema,
   getCustomerListByIdSchema,
 } from "./schema"
-import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp"
+import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js"
 
 export const getCustomerListById = (server: McpServer) => {
   server.tool(
