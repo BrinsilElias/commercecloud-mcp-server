@@ -7,6 +7,9 @@ import { registerShopApiTools } from "./api/shop"
 import { registerDataApiTools } from "./api/data"
 import { registerServerResources } from "./api/resources"
 
+import { defaultHandler } from "./services/oauth-handler"
+import { OAuthProvider } from "@cloudflare/workers-oauth-provider"
+
 export class CommerceCloudMCP extends McpAgent<Env> {
   server = new McpServer(
     {
@@ -33,18 +36,14 @@ export class CommerceCloudMCP extends McpAgent<Env> {
   }
 }
 
-export default {
-  fetch(request: Request, env: Env, ctx: ExecutionContext) {
-    const url = new URL(request.url)
-
-    if (url.pathname === "/sse" || url.pathname === "/sse/message") {
-      return CommerceCloudMCP.serveSSE("/sse").fetch(request, env, ctx)
-    }
-
-    if (url.pathname === "/mcp") {
-      return CommerceCloudMCP.serve("/mcp").fetch(request, env, ctx)
-    }
-
-    return new Response("Not found", { status: 404 })
+export default new OAuthProvider({
+  apiHandlers: {
+    "/sse": CommerceCloudMCP.serveSSE("/sse") as any,
+    "/mcp": CommerceCloudMCP.serve("/mcp") as any,
   },
-}
+  // @ts-expect-error
+  defaultHandler,
+  authorizeEndpoint: "/authorize",
+  tokenEndpoint: "/token",
+  clientRegistrationEndpoint: "/register",
+})

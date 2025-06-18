@@ -23,6 +23,9 @@ SFCC_VERSION = "v25_6"
 SFCC_BM_USER_ID = "brinsil.saju@tryzens.com"
 SFCC_CLIENT_ID = "aeb8b4af-749b-488d-94be-d5c85fab699c"
 
+MICROSOFT_CLIENT_ID = "8df780d3-9e37-46fb-aab5-bd85711f7e38"
+MICROSOFT_TENANT_ID = "10d7abb5-c74a-4512-8c5a-498b9a29622d"
+
 # wrangler secret put SFCC_CLIENT_SECRET
 # wrangler secret put SFCC_BM_USER_SECURITY_TOKEN
 
@@ -30,3 +33,13 @@ SFCC_CLIENT_ID = "aeb8b4af-749b-488d-94be-d5c85fab699c"
 [[r2_buckets]]
 binding = "MCP_RESOURCES"
 bucket_name = "commerce-cloud-mcp-resources"
+
+# Static assets configuration
+[assets]
+directory = "./public"
+binding = "ASSETS"
+
+# KV
+[[kv_namespaces]]
+binding = "OAUTH_KV"
+id = "462343c8ae4e49efbf4844b5decc4180"

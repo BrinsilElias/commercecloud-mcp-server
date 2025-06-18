@@ -6,4 +6,5 @@ dist
 *.log
 .env
 .dev.vars
-.wrangler/
+.wrangler
+.vscode
