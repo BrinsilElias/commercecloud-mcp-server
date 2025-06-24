@@ -1,9 +1,9 @@
-import { ocapi } from "../../services/ocapi"
+import { OcapiClient } from "../../services/ocapi"
 import { DATA_API_TYPE } from "../../utils/constants"
 import { searchSchema } from "./schema"
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js"
 
-export const jobExecutionSearch = (server: McpServer) => {
+export const jobExecutionSearch = (server: McpServer, ocapi: OcapiClient) => {
   server.tool(
     "job-execution-search",
     "Fetches a list of job executions using the SFCC OCAI - Data API " +

@@ -1,4 +1,4 @@
-import { ocapi } from "../../services/ocapi"
+import { OcapiClient } from "../../services/ocapi"
 import { DATA_API_TYPE } from "../../utils/constants"
 import {
   getCustomerByCustomerNumberSchema,
@@ -6,7 +6,7 @@ import {
 } from "./schema"
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js"
 
-export const getCustomerListById = (server: McpServer) => {
+export const getCustomerListById = (server: McpServer, ocapi: OcapiClient) => {
   server.tool(
     "get-customer-list-by-id",
     "Fetches a customer list using the list id from the SFCC OCAI - Data API " +
@@ -26,7 +26,7 @@ export const getCustomerListById = (server: McpServer) => {
   )
 }
 
-export const getCustomerByCustomerNumber = (server: McpServer) => {
+export const getCustomerByCustomerNumber = (server: McpServer, ocapi: OcapiClient) => {
   server.tool(
     "get-customer-by-customer-number",
     "Fetches a customer by their customer number using the SFCC OCAI - Data API " +

@@ -1,9 +1,9 @@
-import { ocapi } from "../../services/ocapi"
+import { OcapiClient } from "../../services/ocapi"
 import { SHOP_API_TYPE } from "../../utils/constants"
 import { getCategoryByIdSchema, getCategoriesByIdsSchema } from "./schema"
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js"
 
-export const getCategoryById = (server: McpServer) => {
+export const getCategoryById = (server: McpServer, ocapi: OcapiClient) => {
   server.tool(
     "get-category-by-id",
     "Fetches a category by their id using the SFCC OCAI - Shop API This requires the category id to be provided as an input",
@@ -17,7 +17,7 @@ export const getCategoryById = (server: McpServer) => {
   )
 }
 
-export const getCategoriesByIds = (server: McpServer) => {
+export const getCategoriesByIds = (server: McpServer, ocapi: OcapiClient) => {
   server.tool(
     "get-categories-by-ids",
     "Fetches a list of categories by their ids using the SFCC OCAI - Shop API This requires the category ids to be provided as an input",

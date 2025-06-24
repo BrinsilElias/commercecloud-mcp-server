@@ -1,9 +1,9 @@
-import { ocapi } from "../../services/ocapi"
+import { OcapiClient } from "../../services/ocapi"
 import { SHOP_API_TYPE } from "../../utils/constants"
 import { getOrderByIdSchema, searchSchema } from "./schema"
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js"
 
-export const getOrderById = (server: McpServer) => {
+export const getOrderById = (server: McpServer, ocapi: OcapiClient) => {
   server.tool(
     "get-order-by-id",
     "Fetches an order by its id using the SFCC OCAI - Shop API " +
@@ -23,7 +23,7 @@ export const getOrderById = (server: McpServer) => {
   )
 }
 
-export const orderSearch = (server: McpServer) => {
+export const orderSearch = (server: McpServer, ocapi: OcapiClient) => {
   server.tool(
     "order-search",
     "Searches for orders using the SFCC OCAI - Shop API " +
