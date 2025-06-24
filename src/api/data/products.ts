@@ -1,9 +1,9 @@
 import { searchSchema, updateProductByIdSchema } from "./schema"
-import { ocapi } from "../../services/ocapi"
+import { OcapiClient } from "../../services/ocapi"
 import { DATA_API_TYPE } from "../../utils/constants"
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js"
 
-export const productSearch = (server: McpServer) => {
+export const productSearch = (server: McpServer, ocapi: OcapiClient) => {
   server.tool(
     "product-search",
     "Searches for products using the SFCC OCAI - Data API " +
@@ -27,7 +27,7 @@ export const productSearch = (server: McpServer) => {
   )
 }
 
-export const updateProductById = (server: McpServer) => {
+export const updateProductById = (server: McpServer, ocapi: OcapiClient) => {
   server.tool(
     "update-product-by-id",
     "Updates a product by its id using the SFCC OCAI - Data API " +

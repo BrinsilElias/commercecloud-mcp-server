@@ -1,5 +1,8 @@
-import { env } from "../utils/env"
-import type { GrantType, OAuthTokenResponse } from "../utils/types"
+import type {
+  GrantType,
+  OcapiClientEnv,
+  OAuthTokenResponse,
+} from "../utils/types"
 
 interface TokenCache {
   token: string
@@ -19,6 +22,7 @@ const isTokenValid = (cache: TokenCache | null): boolean => {
 }
 
 export const createOAuthToken = async (
+  env: OcapiClientEnv,
   grantType: GrantType,
 ): Promise<string> => {
   // Check if we have a valid cached token

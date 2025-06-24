@@ -8,3 +8,5 @@ dist
 .dev.vars
 .wrangler
 .vscode
+worker-configuration.d.ts
+.wrangler/

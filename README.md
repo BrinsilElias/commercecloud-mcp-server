@@ -115,7 +115,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 Greater minds than mine are behind creating tools that made this project possible. I would like to mention those projects
 
 - [colinhacks](https://github.com/colinhacks) for ([zod](https://zod.dev/)).
-- [antfu](https://github.com/antfu) for ([vitest](https://vitest.dev/)).
 - [Egoist](https://www.github.com/egoist) for ([tsup](https://www.github.com/egoist/tsup))
 
 I hope you find this tool useful! 🌟

@@ -1,9 +1,12 @@
+import { z } from "zod"
+import { envSchema } from "./env"
 import { ERROR_TYPES } from "./constants"
 import type { ClientInfo } from "@cloudflare/workers-oauth-provider"
 
 export type ApiType = "shop" | "data"
 export type RequestMethod = "GET" | "POST" | "PUT" | "DELETE" | "PATCH"
 export type GrantType = "client_credentials" | "bm_user_grant"
+export type OcapiClientEnv = z.infer<typeof envSchema>
 
 export interface OcapiRequestOptions {
   method?: RequestMethod

@@ -8,30 +8,34 @@ import {
   getCustomerBasketById,
   getCustomerOrderById,
 } from "./customers"
+import { env } from "../../utils/env"
+import { OcapiClient } from "../../services/ocapi"
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js"
 
 export const registerShopApiTools = (server: McpServer) => {
+  const ocapi = new OcapiClient(env)
+
   // Products API
-  getProductById(server)
-  getProductsByIds(server)
+  getProductById(server, ocapi)
+  getProductsByIds(server, ocapi)
 
   // Orders API
-  orderSearch(server)
-  getOrderById(server)
+  orderSearch(server, ocapi)
+  getOrderById(server, ocapi)
 
   // Content API
-  getContentsByIds(server)
-  contentSearch(server)
+  getContentsByIds(server, ocapi)
+  contentSearch(server, ocapi)
 
   // Customers API
-  getCustomerById(server)
-  getCustomerBasketById(server)
-  getCustomerOrderById(server)
+  getCustomerById(server, ocapi)
+  getCustomerBasketById(server, ocapi)
+  getCustomerOrderById(server, ocapi)
 
   // Baskets API
-  getBasketById(server)
+  getBasketById(server, ocapi)
 
   // Categories API
-  getCategoryById(server)
-  getCategoriesByIds(server)
+  getCategoryById(server, ocapi)
+  getCategoriesByIds(server, ocapi)
 }
