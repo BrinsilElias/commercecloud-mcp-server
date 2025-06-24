@@ -1,9 +1,9 @@
-import { ocapi } from "../../services/ocapi"
+import { OcapiClient } from "../../services/ocapi"
 import { SHOP_API_TYPE } from "../../utils/constants"
 import { getProductByIdSchema, getProductsByIdsSchema } from "./schema"
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp"
 
-export const getProductById = (server: McpServer) => {
+export const getProductById = (server: McpServer, ocapi: OcapiClient) => {
   server.tool(
     "get-product-by-id",
     "Get a product by ID using the SFCC OCAI - Shop API",
@@ -19,7 +19,7 @@ export const getProductById = (server: McpServer) => {
   )
 }
 
-export const getProductsByIds = (server: McpServer) => {
+export const getProductsByIds = (server: McpServer, ocapi: OcapiClient) => {
   server.tool(
     "get-products-by-ids",
     "Get multiple products by their IDs using the SFCC OCAI - Shop API",

@@ -1,9 +1,9 @@
-import { ocapi } from "../../services/ocapi"
+import { OcapiClient } from "../../services/ocapi"
 import { SHOP_API_TYPE } from "../../utils/constants"
 import { contentSearchSchema, getContentsByIdsSchema } from "./schema"
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp"
 
-export const getContentsByIds = (server: McpServer) => {
+export const getContentsByIds = (server: McpServer, ocapi: OcapiClient) => {
   server.tool(
     "get-contents-by-ids",
     "Fetches multiple contents by their ids using the SFCC OCAI - Shop API " +
@@ -21,7 +21,7 @@ export const getContentsByIds = (server: McpServer) => {
   )
 }
 
-export const contentSearch = (server: McpServer) => {
+export const contentSearch = (server: McpServer, ocapi: OcapiClient) => {
   server.tool(
     "content-search",
     "Searches for contents using the SFCC OCAI - Shop API " +

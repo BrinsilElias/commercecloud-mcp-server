@@ -1,9 +1,9 @@
-import { ocapi } from "../../services/ocapi"
+import { OcapiClient } from "../../services/ocapi"
 import { DATA_API_TYPE } from "../../utils/constants"
 import { getContentByIdSchema, updateContentByIdSchema } from "./schema"
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp"
 
-export const getContentById = (server: McpServer) => {
+export const getContentById = (server: McpServer, ocapi: OcapiClient) => {
   server.tool(
     "get-content-by-id",
     "Fetches a content by its id using the SFCC OCAI - Data API " +
@@ -21,7 +21,7 @@ export const getContentById = (server: McpServer) => {
   )
 }
 
-export const updateContentById = (server: McpServer) => {
+export const updateContentById = (server: McpServer, ocapi: OcapiClient) => {
   server.tool(
     "update-content-by-id",
     "Updates a content by its id using the SFCC OCAI - Data API " +

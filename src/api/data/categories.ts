@@ -1,9 +1,9 @@
-import { ocapi } from "../../services/ocapi"
+import { OcapiClient } from "../../services/ocapi"
 import { DATA_API_TYPE } from "../../utils/constants"
 import { searchSchema } from "./schema"
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp"
 
-export const categorySearch = (server: McpServer) => {
+export const categorySearch = (server: McpServer, ocapi: OcapiClient) => {
   server.tool(
     "category-search",
     "Searches for categories using the SFCC OCAI - Data API " +
