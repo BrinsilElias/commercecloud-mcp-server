@@ -13,29 +13,33 @@ import {
   getCustomerByCustomerNumber,
 } from "./customer-lists"
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp"
+import { OcapiClient } from "../../services/ocapi"
+import { env } from "../../utils/env"
+
+const ocapi = new OcapiClient(env)
 
 export const registerDataApiTools = (server: McpServer) => {
   // Categories API
-  categorySearch(server)
+  categorySearch(server, ocapi)
 
   // Products API
-  productSearch(server)
-  updateProductById(server)
+  productSearch(server, ocapi)
+  updateProductById(server, ocapi)
 
   // Custom Objects API
-  getCustomObject(server)
-  updateCustomObject(server)
-  createCustomObject(server)
-  customObjectSearch(server)
+  getCustomObject(server, ocapi)
+  updateCustomObject(server, ocapi)
+  createCustomObject(server, ocapi)
+  customObjectSearch(server, ocapi)
 
   // Libraries API
-  getContentById(server)
-  updateContentById(server)
+  getContentById(server, ocapi)
+  updateContentById(server, ocapi)
 
   // Customer Lists API
-  getCustomerListById(server)
-  getCustomerByCustomerNumber(server)
+  getCustomerListById(server, ocapi)
+  getCustomerByCustomerNumber(server, ocapi)
 
   // Jobs API
-  jobExecutionSearch(server)
+  jobExecutionSearch(server, ocapi)
 }

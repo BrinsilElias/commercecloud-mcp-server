@@ -1,4 +1,4 @@
-import { ocapi } from "../../services/ocapi"
+import { OcapiClient } from "../../services/ocapi"
 import { DATA_API_TYPE } from "../../utils/constants"
 import { env } from "../../utils/env"
 import {
@@ -10,7 +10,7 @@ import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp"
 
 const { SFCC_SITE_ID } = env
 
-export const getCustomObject = (server: McpServer) => {
+export const getCustomObject = (server: McpServer, ocapi: OcapiClient) => {
   server.tool(
     "get-custom-object",
     "Fetches a custom object by its type and key using the SFCC OCAI - Data API " +
@@ -36,7 +36,7 @@ export const getCustomObject = (server: McpServer) => {
   )
 }
 
-export const updateCustomObject = (server: McpServer) => {
+export const updateCustomObject = (server: McpServer, ocapi: OcapiClient) => {
   server.tool(
     "update-custom-object",
     "Updates a custom object by its type and key using the SFCC OCAI - Data API " +
@@ -70,7 +70,7 @@ export const updateCustomObject = (server: McpServer) => {
   )
 }
 
-export const createCustomObject = (server: McpServer) => {
+export const createCustomObject = (server: McpServer, ocapi: OcapiClient) => {
   server.tool(
     "create-custom-object",
     "Creates a custom object by its type and key using the SFCC OCAI - Data API " +
@@ -104,7 +104,7 @@ export const createCustomObject = (server: McpServer) => {
   )
 }
 
-export const customObjectSearch = (server: McpServer) => {
+export const customObjectSearch = (server: McpServer, ocapi: OcapiClient) => {
   server.tool(
     "custom-object-search",
     "Searches for custom objects using the SFCC OCAI - Data API " +
