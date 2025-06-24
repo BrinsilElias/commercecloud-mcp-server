@@ -1,8 +1,10 @@
+import { z } from "zod"
+import { envSchema } from "./env"
+
 export type ApiType = "shop" | "data"
-
 export type RequestMethod = "GET" | "POST" | "PUT" | "DELETE" | "PATCH"
-
 export type GrantType = "client_credentials" | "bm_user_grant"
+export type OcapiClientEnv = z.infer<typeof envSchema>
 
 export interface OcapiRequestOptions {
   method?: RequestMethod

@@ -1,4 +1,4 @@
-import { ocapi } from "../../services/ocapi"
+import { OcapiClient } from "../../services/ocapi"
 import { SHOP_API_TYPE } from "../../utils/constants"
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js"
 import {
@@ -7,7 +7,7 @@ import {
   getCustomerOrderByIdSchema,
 } from "./schema"
 
-export const getCustomerById = (server: McpServer) => {
+export const getCustomerById = (server: McpServer, ocapi: OcapiClient) => {
   server.tool(
     "get-customer-by-id",
     "Fetches a customer by their customer id using the SFCC OCAI - Shop API This requires the customer id to be provided as an input",
@@ -26,7 +26,10 @@ export const getCustomerById = (server: McpServer) => {
   )
 }
 
-export const getCustomerBasketById = (server: McpServer) => {
+export const getCustomerBasketById = (
+  server: McpServer,
+  ocapi: OcapiClient,
+) => {
   server.tool(
     "get-customer-basket-by-id",
     "Fetches a customers basket by their customer id using the SFCC OCAI - Shop API This requires the customer id to be provided as an input",
@@ -49,7 +52,7 @@ export const getCustomerBasketById = (server: McpServer) => {
   )
 }
 
-export const getCustomerOrderById = (server: McpServer) => {
+export const getCustomerOrderById = (server: McpServer, ocapi: OcapiClient) => {
   server.tool(
     "get-customer-order-by-id",
     "Fetches a customers order by their customer id using the SFCC OCAI - Shop API This requires the customer id to be provided as an input",

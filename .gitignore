@@ -6,4 +6,5 @@ dist
 *.log
 .env
 .dev.vars
+worker-configuration.d.ts
 .wrangler/
