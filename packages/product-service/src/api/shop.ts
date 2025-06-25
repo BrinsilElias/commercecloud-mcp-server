@@ -1,0 +1,45 @@
+import { getProductByIdSchema, getProductsByIdsSchema } from "../utils/schemas"
+import { OcapiClient, SHOP_API_TYPE } from "@commercecloud/common"
+import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js"
+
+export const getProductById = (server: McpServer, ocapi: OcapiClient) => {
+  server.tool(
+    "get-product-by-id",
+    "Get a product by ID using the SFCC OCAI - Shop API",
+    getProductByIdSchema.shape,
+    async ({ id, options }: { id: string; options?: Record<string, any> }) => {
+      const response = await ocapi.get(SHOP_API_TYPE, `/products/${id}`, {
+        queryParams: options || {},
+      })
+      return {
+        content: [{ type: "text", text: JSON.stringify(response, null, 2) }],
+      }
+    },
+  )
+}
+
+export const getProductsByIds = (server: McpServer, ocapi: OcapiClient) => {
+  server.tool(
+    "get-products-by-ids",
+    "Get multiple products by their IDs using the SFCC OCAI - Shop API",
+    getProductsByIdsSchema.shape,
+    async ({
+      ids,
+      options,
+    }: {
+      ids: string[]
+      options?: Record<string, any>
+    }) => {
+      const response = await ocapi.get(
+        SHOP_API_TYPE,
+        `/products/(${ids.join(",")})`,
+        {
+          queryParams: options || {},
+        },
+      )
+      return {
+        content: [{ type: "text", text: JSON.stringify(response, null, 2) }],
+      }
+    },
+  )
+}

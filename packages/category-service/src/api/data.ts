@@ -1,0 +1,22 @@
+import { OcapiClient, DATA_API_TYPE } from "@commercecloud/common"
+import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js"
+import { searchSchema } from "../utils/schemas"
+
+export const categorySearch = (server: McpServer, ocapi: OcapiClient) => {
+  server.tool(
+    "category-search",
+    "Searches for categories using the SFCC OCAI - Data API " +
+      "This requires the search query to be provided as an input " +
+      "Additional options can be provided to filter the search results",
+    searchSchema.shape,
+    async (options: Record<string, any>) => {
+      const body = options ? { ...options } : {}
+      const categories = await ocapi.post(DATA_API_TYPE, `/category_search`, {
+        body,
+      })
+      return {
+        content: [{ type: "text", text: JSON.stringify(categories, null, 2) }],
+      }
+    },
+  )
+}

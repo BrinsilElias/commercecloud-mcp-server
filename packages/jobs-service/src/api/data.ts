@@ -1,0 +1,25 @@
+import { searchSchema } from "../utils/schemas"
+import { OcapiClient, DATA_API_TYPE } from "@commercecloud/common"
+import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js"
+
+export const jobExecutionSearch = (server: McpServer, ocapi: OcapiClient) => {
+  server.tool(
+    "job-execution-search",
+    "Fetches a list of job executions using the SFCC OCAI - Data API " +
+      "This requires the search options to be provided as an input",
+    searchSchema.shape,
+    async (options: Record<string, any>) => {
+      const body = options ? { ...options } : {}
+      const jobExecution = await ocapi.post(
+        DATA_API_TYPE,
+        `/job_execution_search`,
+        { body },
+      )
+      return {
+        content: [
+          { type: "text", text: JSON.stringify(jobExecution, null, 2) },
+        ],
+      }
+    },
+  )
+}

@@ -1,39 +1,54 @@
 {
   "name": "commercecloud-mcp-server",
   "version": "0.0.1",
-  "description": "Commerce Cloud MCP Server",
-  "author": "Brinsil Elias",
-  "publishConfig": {
-    "access": "public"
-  },
-  "files": [
-    "dist"
-  ],
+  "description": "Commerce Cloud MCP Server Monorepo - Multiple Cloudflare Workers Services",
   "type": "module",
-  "main": "./dist/index.js",
-  "module": "./dist/index.mjs",
-  "exports": {
-    "require": "./dist/index.js",
-    "import": "./dist/index.mjs"
-  },
-  "types": "./dist/index.d.ts",
-  "scripts": {
-    "deploy": "wrangler deploy",
-    "dev": "wrangler dev",
-    "cf-typegen": "wrangler types"
-  },
+  "author": "Brinsil Elias",
   "license": "MIT",
+  "keywords": [
+    "commerce-cloud",
+    "mcp-server",
+    "cloudflare-workers",
+    "monorepo",
+    "salesforce"
+  ],
+  "scripts": {
+    "deploy": "pnpm -r deploy",
+    "cf-typegen": "pnpm -r cf-typegen",
+    "build": "pnpm --filter common build",
+    "dev:basket": "pnpm --filter basket-service dev",
+    "dev:category": "pnpm --filter category-service dev",
+    "dev:content": "pnpm --filter content-service dev",
+    "dev:custom-objects": "pnpm --filter custom-objects-service dev",
+    "dev:customer": "pnpm --filter customer-service dev",
+    "dev:jobs": "pnpm --filter jobs-service dev",
+    "dev:order": "pnpm --filter order-service dev",
+    "dev:product": "pnpm --filter product-service dev",
+    "deploy:basket": "pnpm run --filter basket-service deploy",
+    "deploy:category": "pnpm run --filter category-service deploy",
+    "deploy:content": "pnpm run --filter content-service deploy",
+    "deploy:custom-objects": "pnpm run --filter custom-objects-service deploy",
+    "deploy:customer": "pnpm run --filter customer-service deploy",
+    "deploy:jobs": "pnpm run --filter jobs-service deploy",
+    "deploy:order": "pnpm run --filter order-service deploy",
+    "deploy:product": "pnpm run --filter product-service deploy"
+  },
   "devDependencies": {
     "@egoist/prettier-config": "1.0.0",
+    "@types/node": "^22.15.24",
     "prettier": "3.5.3",
-    "typescript": "5.8.3",
-    "wrangler": "^4.20.0"
+    "typescript": "5.8.3"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.12.0",
-    "@types/node": "^22.15.24",
-    "agents": "^0.0.95",
-    "hono": "^4.7.11",
     "zod": "^3.25.34"
-  }
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/BrinsilElias/commercecloud-mcp-server"
+  },
+  "packageManager": "pnpm@9.12.3"
 }

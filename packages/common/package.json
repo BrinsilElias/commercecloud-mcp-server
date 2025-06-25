@@ -1,0 +1,23 @@
+{
+  "name": "@commercecloud/common",
+  "version": "0.0.1",
+  "description": "Common utilities and services for Commerce Cloud MCP Services",
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "main": "./dist/index.js",
+  "exports": {
+    "import": "./dist/index.js"
+  },
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build-fast": "tsup src/index.ts --format esm",
+    "build": "npm run build-fast -- --dts-resolve",
+    "prepublishOnly": "npm run build"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "tsup": "8.5.0"
+  }
+}
