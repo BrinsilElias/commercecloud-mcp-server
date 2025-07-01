@@ -1,17 +1,11 @@
 import { decode } from "hono/jwt"
 import { env } from "cloudflare:workers"
-import {
-  getUpstreamAuthorizeUrl,
-  generateSecureRandomString,
-  fetchUpstreamAuthToken,
-  generateRequestId,
-} from "./helpers"
-import { OAuthError } from "./oauth-errors"
-import { ERROR_TYPES } from "./constants"
+import { HTTPException } from "hono/http-exception"
+import { getUpstreamAuthorizeUrl, fetchUpstreamAuthToken } from "./helpers"
 
 import type { Context } from "hono"
 import type { AuthRequest } from "@cloudflare/workers-oauth-provider"
-import type { ApprovalDialogOptions, ErrorPageOptions } from "./types"
+import type { ApprovalDialogOptions } from "./types"
 
 function sanitizeHtml(unsafe: string): string {
   if (typeof unsafe !== "string") {
@@ -43,30 +37,19 @@ function sanitizeHtml(unsafe: string): string {
   )
 }
 
-export async function redirectToUpstreamAuthorize(
-  c: Context,
-  oAuthReqInfo: AuthRequest,
-) {
-  // Generate secure random values for state and nonce
-  const nonce = generateSecureRandomString(32)
-
+export async function redirectToUpstreamAuthorize(c: Context, oAuthReqInfo: AuthRequest) {
   // Create enhanced state object with security parameters
   const stateData = {
     oAuthReqInfo,
-    nonce,
     timestamp: Date.now(),
   }
 
   const authorizeUrl = getUpstreamAuthorizeUrl({
-    upstream_url: `https://login.microsoftonline.com/${env.MICROSOFT_TENANT_ID}/oauth2/v2.0/authorize`,
-    client_id: env.MICROSOFT_CLIENT_ID,
-    scope: "openid email profile",
+    upstream_url: `https://account.demandware.com/dwsso/oauth2/authorize`,
+    client_id: env.SFCC_CLIENT_ID,
     redirect_uri: new URL("/callback", c.req.url).href,
     state: btoa(JSON.stringify(stateData)),
-    nonce,
-    response_mode: "form_post",
     response_type: "code",
-    prompt: "select_account",
   })
 
   return c.redirect(authorizeUrl, 302)
@@ -74,7 +57,7 @@ export async function redirectToUpstreamAuthorize(
 
 export async function parseRedirectApproval(req: Request) {
   if (req.method !== "POST") {
-    throw new OAuthError(405, "Method not allowed", generateRequestId())
+    throw new HTTPException(405, { message: "Method not allowed" })
   }
 
   const formData = await req.formData()
@@ -82,25 +65,17 @@ export async function parseRedirectApproval(req: Request) {
   const encodedState = formData.get("state")
 
   if (action !== "approve") {
-    throw new OAuthError(400, "Authorization denied", generateRequestId())
+    throw new HTTPException(400, { message: "Authorization denied" })
   }
 
   if (!encodedState || typeof encodedState !== "string") {
-    throw new OAuthError(
-      400,
-      "Missing authorization state",
-      generateRequestId(),
-    )
+    throw new HTTPException(400, { message: "Missing authorization state" })
   }
 
   try {
     return JSON.parse(atob(encodedState))
   } catch (error) {
-    throw new OAuthError(
-      400,
-      "Invalid authorization state",
-      generateRequestId(),
-    )
+    throw new HTTPException(400, { message: "Invalid authorization state" })
   }
 }
 
@@ -196,16 +171,12 @@ export function renderApprovalPage(c: Context, options: ApprovalDialogOptions) {
   `)
 }
 
-export function renderErrorPage(c: Context, options: ErrorPageOptions) {
-  const {
-    errorType,
-    message,
-    statusCode,
-    requestId,
-    showRetry = true,
-    retryUrl,
-  } = options
-  const errorInfo = ERROR_TYPES[errorType]
+export function renderErrorPage(c: Context, statusCode: number = 404) {
+  const is404 = statusCode === 404
+  const title = is404 ? "404 - Page Not Found" : `${statusCode} - Server Error`
+  const message = is404
+    ? "The page you're looking for doesn't exist or has been moved."
+    : "An internal server error occurred while processing your request."
 
   return c.html(`
     <!DOCTYPE html>
@@ -213,18 +184,20 @@ export function renderErrorPage(c: Context, options: ErrorPageOptions) {
       <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>${errorInfo.title} - Commerce Cloud MCP Server</title>
+        <title>${title}</title>
         <link rel="stylesheet" href="/styles.css">
       </head>
       <body>
         <div class="page-container">
           <!-- Error Icon -->
           <div class="error-icon">
-            ${errorInfo.icon}
+            <svg width="64" height="64" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.888-.833-2.598 0L4.216 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+            </svg>
           </div>
           <!-- Error Title -->
           <h1 class="error-title">
-            ${errorInfo.title}
+            ${title}
           </h1>
           <!-- Error Message -->
           <p class="error-message">
@@ -232,27 +205,20 @@ export function renderErrorPage(c: Context, options: ErrorPageOptions) {
           </p>
           <!-- Action Buttons -->
           <div class="button-group">
-            ${
-              showRetry
-                ? `
-            <a href="${retryUrl}" class="btn btn-error">
-              Try Again
+            <a href="/" class="btn btn-primary">
+              Go Home
             </a>
-            `
-                : ""
-            }
             <button 
               type="button" 
-              onclick="window.close()"
+              onclick="window.history.back()"
               class="btn btn-secondary"
             >
-              Close Window
+              Go Back
             </button>
           </div>
           <!-- Footer with meta information -->
           <div class="error-meta">
             <p>Error Code: ${statusCode}</p>
-            ${requestId ? `<p>Request ID: ${requestId}</p>` : ""}
             <p>Commerce Cloud MCP Server</p>
           </div>
         </div>
@@ -262,109 +228,64 @@ export function renderErrorPage(c: Context, options: ErrorPageOptions) {
 }
 
 export async function handleCallback(c: Context) {
-  let name: string = ""
   let email: string = ""
   let code: string | undefined
   let stateParam: string | undefined
-  const requestId = generateRequestId()
 
-  // Handle both GET (query params) and POST (form data) responses
-  if (c.req.method === "POST") {
-    const formData = await c.req.formData()
-    code = formData.get("code") as string
-    stateParam = formData.get("state") as string
-  } else {
-    code = c.req.query("code") as string
-    stateParam = c.req.query("state") as string
-  }
+  code = c.req.query("code") as string
+  stateParam = c.req.query("state") as string
 
   if (!stateParam) {
-    throw new OAuthError(400, "Missing state parameter", generateRequestId())
+    throw new HTTPException(400, { message: "Missing state parameter" })
   }
 
   let stateData: any
   try {
     stateData = JSON.parse(atob(stateParam))
   } catch (error) {
-    throw new OAuthError(400, "Invalid state parameter", generateRequestId())
+    throw new HTTPException(400, { message: "Invalid state parameter" })
   }
 
-  const { oAuthReqInfo, nonce, timestamp } = stateData
+  const { oAuthReqInfo, timestamp } = stateData
   const { clientId } = oAuthReqInfo
 
   if (!clientId) {
-    throw new OAuthError(400, "Invalid OAuth request", generateRequestId())
+    throw new HTTPException(400, { message: "Invalid OAuth request" })
   }
 
   // Validate state freshness (10 minutes max)
   if (Date.now() - timestamp > 10 * 60 * 1000) {
-    throw new OAuthError(
-      400,
-      "Authentication session expired",
-      generateRequestId(),
-    )
-  }
-
-  if (!nonce) {
-    throw new OAuthError(400, "Missing security nonce", generateRequestId())
+    throw new HTTPException(400, { message: "Authentication session expired" })
   }
 
   if (!code) {
-    throw new OAuthError(400, "Missing authorization code", generateRequestId())
+    throw new HTTPException(400, { message: "Missing authorization code" })
   }
 
-  const [{ access_token, id_token }, errResponse] =
-    await fetchUpstreamAuthToken({
-      upstream_url: `https://login.microsoftonline.com/${env.MICROSOFT_TENANT_ID}/oauth2/v2.0/token`,
-      client_id: c.env.MICROSOFT_CLIENT_ID,
-      client_secret: c.env.MICROSOFT_CLIENT_SECRET,
-      code,
-      redirect_uri: new URL("/callback", c.req.url).href,
-    })
+  const [{ access_token, refresh_token }] = await fetchUpstreamAuthToken({
+    upstream_url: `https://account.demandware.com/dw/oauth2/access_token`,
+    client_id: c.env.SFCC_CLIENT_ID,
+    client_secret: c.env.SFCC_CLIENT_SECRET,
+    code,
+    redirect_uri: new URL("/callback", c.req.url).href,
+  })
 
-  if (errResponse) {
-    throw new OAuthError(
-      502,
-      "Failed to obtain access token",
-      generateRequestId(),
-    )
+  if (!access_token) {
+    throw new HTTPException(502, { message: "Failed to obtain access token" })
   }
 
-  if (id_token) {
-    const { payload } = decode(id_token)
-
-    // Validate nonce
-    if (payload.nonce !== nonce) {
-      throw new OAuthError(400, "Invalid security nonce", generateRequestId())
-    }
-
-    // Validate audience
-    if (payload.aud !== c.env.MICROSOFT_CLIENT_ID) {
-      throw new OAuthError(400, "Invalid token audience", generateRequestId())
-    }
-
-    // Validate issuer
-    const expectedIssuer = `https://login.microsoftonline.com/${env.MICROSOFT_TENANT_ID}/v2.0`
-    if (payload.iss !== expectedIssuer) {
-      throw new OAuthError(400, "Invalid token issuer", generateRequestId())
-    }
-
-    name = (payload.name || payload.preferred_username || "") as string
-    email = (payload.email || payload.preferred_username || "") as string
-  }
+  const { payload } = decode(access_token)
+  email = (payload.sub || payload.subname || "") as string
 
   const { redirectTo } = await c.env.OAUTH_PROVIDER.completeAuthorization({
     request: oAuthReqInfo,
     scope: oAuthReqInfo.scope,
-    userId: email || "unknown_user",
+    userId: email,
     metadata: {
-      nonce,
       loginTimestamp: timestamp,
-      requestId,
     },
     props: {
       access_token,
-      name,
       email,
     },
   })

@@ -1,8 +1,4 @@
-import type {
-  GrantType,
-  OcapiClientEnv,
-  OAuthTokenResponse,
-} from "../utils/types"
+import type { GrantType, OcapiClientEnv, OAuthTokenResponse } from "../utils/types"
 
 interface TokenCache {
   token: string
@@ -45,12 +41,8 @@ export const createOAuthToken = async (
   try {
     switch (grantType) {
       case "client_credentials":
-        baseUrl = new URL(
-          "https://account.demandware.com/dwsso/oauth2/access_token",
-        )
-        credentials = Buffer.from(
-          `${SFCC_CLIENT_ID}:${SFCC_CLIENT_SECRET}`,
-        ).toString("base64")
+        baseUrl = new URL("https://account.demandware.com/dwsso/oauth2/access_token")
+        credentials = Buffer.from(`${SFCC_CLIENT_ID}:${SFCC_CLIENT_SECRET}`).toString("base64")
         body = new URLSearchParams({ grant_type: "client_credentials" })
         break
       case "bm_user_grant":
@@ -60,8 +52,7 @@ export const createOAuthToken = async (
           `${SFCC_BM_USER_ID}:${SFCC_BM_USER_SECURITY_TOKEN}:${SFCC_CLIENT_SECRET}`,
         ).toString("base64")
         body = new URLSearchParams({
-          grant_type:
-            "urn:demandware:params:oauth:grant-type:client-id:dwsid:dwsecuretoken",
+          grant_type: "urn:demandware:params:oauth:grant-type:client-id:dwsid:dwsecuretoken",
         })
         break
     }
@@ -76,11 +67,7 @@ export const createOAuthToken = async (
     })
 
     if (!response.ok) {
-      console.error(
-        "Failed to fetch OAuth token",
-        response.status,
-        response.statusText,
-      )
+      console.error("Failed to fetch OAuth token", response.status, response.statusText)
       return ""
     }
 

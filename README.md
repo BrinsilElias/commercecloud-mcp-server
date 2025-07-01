@@ -55,7 +55,6 @@ npm run build
 5. Import OCAPI configurations:
 
    The OCAPI configuration files are located in the `data/ocapi` directory. Import them into your SFCC Business Manager:
-
    - Log into Business Manager
    - Navigate to Administration > Site Development > Open Commerce API Settings
    - For each JSON file in the `data/ocapi` directory:
@@ -67,7 +66,6 @@ npm run build
    These configurations enable the necessary endpoints for the MCP server to function.
 
 6. Configure your MCP client application (Example - Claude Desktop App):
-
    - Open Claude Desktop App
    - Go to File > Settings > Developer > Edit Config
    - This will open a folder containing a file `claude_desktop_config.json`

@@ -18,16 +18,12 @@ new_sqlite_classes = ["CommerceCloudMCP"]
 
 [vars]
 SFCC_INSTANCE_URL = "https://zzra-078.dx.commercecloud.salesforce.com"
-SFCC_SITE_ID = "RefArch"
+SFCC_DEFAULT_SITE_ID = "RefArch"
 SFCC_VERSION = "v25_6"
 SFCC_BM_USER_ID = "brinsil.saju@tryzens.com"
-SFCC_CLIENT_ID = "aeb8b4af-749b-488d-94be-d5c85fab699c"
-
-MICROSOFT_CLIENT_ID = "8df780d3-9e37-46fb-aab5-bd85711f7e38"
-MICROSOFT_TENANT_ID = "10d7abb5-c74a-4512-8c5a-498b9a29622d"
+SFCC_CLIENT_ID = "b865b2d5-761b-4240-b7e5-f686ec773eed"
 
 # wrangler secret put SFCC_CLIENT_SECRET
-# wrangler secret put SFCC_BM_USER_SECURITY_TOKEN
 
 # R2 bucket for MCP server resources
 [[r2_buckets]]

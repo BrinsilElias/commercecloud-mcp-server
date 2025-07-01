@@ -5,9 +5,8 @@ import {
   redirectToUpstreamAuthorize,
   parseRedirectApproval,
   handleCallback,
-} from "../utils/workers-oauth-utils"
-import { OAuthError } from "../utils/oauth-errors"
-import { generateRequestId } from "../utils/helpers"
+  renderErrorPage,
+} from "@/utils/workers-oauth-utils"
 
 import type { OAuthHelpers } from "@cloudflare/workers-oauth-provider"
 
@@ -18,11 +17,7 @@ app.get("/authorize", async (c) => {
   const { clientId } = oAuthReqInfo
 
   if (!clientId) {
-    throw new OAuthError(
-      400,
-      "Invalid authorization request",
-      generateRequestId(),
-    )
+    throw new HTTPException(400, { message: "Invalid authorization request" })
   }
 
   return renderApprovalPage(c, {
@@ -41,23 +36,21 @@ app.post("/authorize", async (c) => {
   const state = await parseRedirectApproval(c.req.raw)
 
   if (!state.oAuthReqInfo) {
-    throw new OAuthError(
-      400,
-      "Invalid authorization approval",
-      generateRequestId(),
-    )
+    throw new HTTPException(400, { message: "Invalid authorization approval" })
   }
 
   return redirectToUpstreamAuthorize(c, state.oAuthReqInfo)
 })
 
 app.get("/callback", handleCallback)
-app.post("/callback", handleCallback)
+
+// Catch-all route for unmatched paths - 404 Page Not Found
+app.all("*", (c) => {
+  return renderErrorPage(c, 404)
+})
 
 app.onError((err, c) => {
-  const requestId = generateRequestId()
-
-  console.error(`OAuth Error [${requestId}]:`, {
+  console.error("OAuth Error:", {
     error: err.message,
     stack: err.stack,
     url: c.req.url,
@@ -65,29 +58,14 @@ app.onError((err, c) => {
     timestamp: new Date().toISOString(),
   })
 
-  // Handle custom OAuth errors
-  if (err instanceof OAuthError) {
-    return err.getResponse(c)
-  }
-
-  // Handle standard HTTP exceptions
+  // Determine status code from error
+  let statusCode = 500
   if (err instanceof HTTPException) {
-    const oauthError = new OAuthError(
-      err.status,
-      err.message || "An authentication error occurred",
-      generateRequestId(),
-    )
-    return oauthError.getResponse(c)
+    statusCode = err.status
   }
 
-  // Handle unexpected errors
-  const oauthError = new OAuthError(
-    500,
-    "An unexpected error occurred during authentication",
-    generateRequestId(),
-  )
-
-  return oauthError.getResponse(c)
+  // Return error page with appropriate status code
+  return renderErrorPage(c, statusCode)
 })
 
 export { app as defaultHandler }

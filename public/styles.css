@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap");
 
 :root {
   /* Neutral Colors */
@@ -14,7 +14,7 @@
   /* Primary Theme (Blue) */
   --color-primary-500: #3b82f6;
   --color-primary-600: #4f46e5;
-  --color-primary-800: #1B23A6;
+  --color-primary-800: #1b23a6;
   --color-primary-900: #0b1183;
 
   /* Error Theme (Red) */
@@ -35,13 +35,17 @@
   --color-border-hover: #d1d5db;
 
   /* Shadow Colors */
-  --shadow-light: rgba(0, 0, 0, .05);
-  --shadow-medium: rgba(0, 0, 0, .1);
+  --shadow-light: rgba(0, 0, 0, 0.05);
+  --shadow-medium: rgba(0, 0, 0, 0.1);
 
   /* Gradients */
-  --gradient-primary: linear-gradient(135deg, var(--color-primary-500) 0%, var(--color-primary-600) 100%);
+  --gradient-primary: linear-gradient(135deg,
+      var(--color-primary-500) 0%,
+      var(--color-primary-600) 100%);
   --gradient-error: linear-gradient(135deg, var(--color-error-500) 0%, var(--color-error-600) 100%);
-  --gradient-error-hover: linear-gradient(135deg, var(--color-error-600) 0%, var(--color-error-700) 100%);
+  --gradient-error-hover: linear-gradient(135deg,
+      var(--color-error-600) 0%,
+      var(--color-error-700) 100%);
 }
 
 * {
@@ -51,7 +55,13 @@
 }
 
 body {
-  font: 400 1rem/1.6 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font:
+    400 1rem/1.6 "Inter",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    sans-serif;
   min-height: 100vh;
   display: flex;
   align-items: center;
@@ -68,7 +78,9 @@ body {
   width: 100%;
   padding: 2rem;
   border: 1px solid var(--color-border-light);
-  box-shadow: 0 25px 50px -12px var(--shadow-medium), 0 0 0 1px var(--shadow-light);
+  box-shadow:
+    0 25px 50px -12px var(--shadow-medium),
+    0 0 0 1px var(--shadow-light);
 }
 
 /* OAuth-specific styles */
@@ -84,7 +96,7 @@ body {
 .logo-image {
   height: 3rem;
   margin: 0 auto;
-  border-radius: .75rem;
+  border-radius: 0.75rem;
   object-fit: cover;
 }
 
@@ -93,7 +105,7 @@ body {
   height: 3rem;
   margin: 0 auto 1rem;
   background: var(--gradient-primary);
-  border-radius: .75rem;
+  border-radius: 0.75rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -108,12 +120,12 @@ body {
 .title {
   font: 600 1.5rem/1.2 inherit;
   color: var(--color-text-primary);
-  margin-bottom: .5rem;
+  margin-bottom: 0.5rem;
 }
 
 .subtitle {
   color: var(--color-text-muted);
-  font-size: .875rem;
+  font-size: 0.875rem;
 }
 
 .client-name,
@@ -129,8 +141,8 @@ body {
 .permissions-content {
   display: flex;
   align-items: flex-start;
-  gap: .75rem;
-  font-size: .875rem;
+  gap: 0.75rem;
+  font-size: 0.875rem;
   color: var(--color-text-muted);
 }
 
@@ -138,7 +150,7 @@ body {
   width: 1.25rem;
   height: 1.25rem;
   color: var(--color-primary-500);
-  margin-top: .125rem;
+  margin-top: 0.125rem;
   flex-shrink: 0;
 }
 
@@ -153,7 +165,7 @@ body {
 }
 
 .footer-text {
-  font-size: .75rem;
+  font-size: 0.75rem;
   color: var(--color-text-light);
   text-align: center;
 }
@@ -167,18 +179,20 @@ body {
   align-items: center;
   justify-content: center;
   font-size: 1.5rem;
+  color: var(--color-error-500);
 }
 
 .error-title {
-  font: 600 1.5rem/1.2 inherit;
+  font-size: 1.125rem;
+  font-weight: 600;
   color: var(--color-error-500);
-  margin-bottom: .5rem;
+  margin-bottom: 0.5rem;
   text-align: center;
 }
 
 .error-message {
   color: var(--color-text-secondary);
-  font-size: .875rem;
+  font-size: 0.875rem;
   text-align: center;
   margin-bottom: 1.5rem;
   line-height: 1.5;
@@ -187,16 +201,16 @@ body {
 .error-details {
   background: var(--color-error-50);
   border: 1px solid var(--color-error-200);
-  border-radius: .5rem;
+  border-radius: 0.5rem;
   padding: 1rem;
   margin-bottom: 1.5rem;
-  font-size: .8rem;
+  font-size: 0.8rem;
   color: var(--color-error-800);
-  font-family: 'Courier New', monospace;
+  font-family: "Courier New", monospace;
 }
 
 .error-meta {
-  font-size: .75rem;
+  font-size: 0.75rem;
   color: var(--color-text-light);
   text-align: center;
   margin-top: 1rem;
@@ -208,17 +222,18 @@ body {
 .button-group {
   display: flex;
   flex-direction: column;
-  gap: .75rem;
+  gap: 0.75rem;
 }
 
 .btn {
   width: 100%;
-  font: 500 .875rem inherit;
-  padding: .75rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  padding: 0.75rem 1rem;
   border: none;
-  border-radius: .75rem;
+  border-radius: 0.75rem;
   cursor: pointer;
-  transition: all .2s ease-in-out;
+  transition: all 0.2s ease-in-out;
   text-decoration: none;
   text-align: center;
   display: inline-block;
@@ -267,7 +282,7 @@ body {
 @media (max-width: 640px) {
   .page-container {
     padding: 1.5rem;
-    margin: .5rem;
+    margin: 0.5rem;
   }
 
   .title,

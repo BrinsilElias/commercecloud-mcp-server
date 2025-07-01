@@ -1,13 +1,5 @@
 import type { UpStreamAuthorizeUrlParams } from "./types"
 
-export function generateSecureRandomString(length: number = 32): string {
-  const array = new Uint8Array(length)
-  crypto.getRandomValues(array)
-  return Array.from(array, (byte) => byte.toString(16).padStart(2, "0")).join(
-    "",
-  )
-}
-
 export function getUpstreamAuthorizeUrl(params: UpStreamAuthorizeUrlParams) {
   const upstream = new URL(params.upstream_url)
 
@@ -15,20 +7,8 @@ export function getUpstreamAuthorizeUrl(params: UpStreamAuthorizeUrlParams) {
   upstream.searchParams.set("response_type", params.response_type || "code")
   upstream.searchParams.set("redirect_uri", params.redirect_uri)
 
-  const scopes = params.scope.split(" ")
-  if (!scopes.includes("openid")) {
-    scopes.unshift("openid")
-  }
-  upstream.searchParams.set("scope", scopes.join(" "))
-
   if (params.state) upstream.searchParams.set("state", params.state)
   if (params.nonce) upstream.searchParams.set("nonce", params.nonce)
-
-  upstream.searchParams.set("response_mode", params.response_mode || "query")
-
-  if (params.prompt) upstream.searchParams.set("prompt", params.prompt)
-  if (params.login_hint)
-    upstream.searchParams.set("login_hint", params.login_hint)
 
   return upstream.href
 }
@@ -48,7 +28,7 @@ export async function fetchUpstreamAuthToken({
 }): Promise<[Record<string, string>, null] | [Record<string, null>, Response]> {
   if (!code) {
     return [
-      { access_token: null, id_token: null },
+      { access_token: null, refresh_token: null },
       new Response("Missing code", { status: 400 }),
     ]
   }
@@ -57,34 +37,28 @@ export async function fetchUpstreamAuthToken({
     method: "POST",
     headers: {
       "Content-Type": "application/x-www-form-urlencoded",
+      Authorization: `Basic ${btoa(`${client_id}:${client_secret}`)}`,
     },
     body: new URLSearchParams({
-      client_id,
-      client_secret,
-      code,
       redirect_uri,
-      scope: "openid email profile",
       grant_type: "authorization_code",
+      code,
     }).toString(),
   })
   if (!resp.ok) {
     console.log(await resp.text())
     return [
-      { access_token: null, id_token: null },
+      { access_token: null, refresh_token: null },
       new Response("Failed to fetch access token", { status: 500 }),
     ]
   }
-  const body: { access_token: string; id_token: string } = await resp.json()
-  const { access_token, id_token } = body
-  if (!access_token || !id_token) {
+  const body: { access_token: string; refresh_token: string } = await resp.json()
+  const { access_token, refresh_token } = body
+  if (!access_token || !refresh_token) {
     return [
-      { access_token: null, id_token: null },
+      { access_token: null, refresh_token: null },
       new Response("Missing access token", { status: 400 }),
     ]
   }
-  return [{ access_token, id_token }, null]
-}
-
-export function generateRequestId(): string {
-  return `req_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`
+  return [{ access_token, refresh_token }, null]
 }

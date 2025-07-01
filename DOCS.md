@@ -99,7 +99,6 @@ export default new OAuthProvider({
 The server implements a two-tier architecture:
 
 1. **Shop API** (`src/api/shop/`)
-
    - Public-facing operations
    - No authentication required
    - Customer storefront functionality
@@ -117,22 +116,17 @@ Each API module follows a consistent pattern for registering MCP tools:
 
 ```typescript
 export const getProductById = (server: McpServer) => {
-  server.tool(
-    "get-product-by-id",
-    "Retrieve a product by its ID",
-    inputSchema,
-    async (request) => {
-      // Implementation
-      return {
-        content: [
-          {
-            type: "text",
-            text: JSON.stringify(response, null, 2),
-          },
-        ],
-      }
-    },
-  )
+  server.tool("get-product-by-id", "Retrieve a product by its ID", inputSchema, async (request) => {
+    // Implementation
+    return {
+      content: [
+        {
+          type: "text",
+          text: JSON.stringify(response, null, 2),
+        },
+      ],
+    }
+  })
 }
 ```
 
