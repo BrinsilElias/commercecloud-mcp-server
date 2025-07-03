@@ -1,4 +1,5 @@
-import type { UpStreamAuthorizeUrlParams } from "./types"
+import { HTTPException } from "hono/http-exception"
+import type { OAuthTokenResponse, UpStreamAuthorizeUrlParams } from "./types"
 
 export function getUpstreamAuthorizeUrl(params: UpStreamAuthorizeUrlParams) {
   const upstream = new URL(params.upstream_url)
@@ -14,51 +15,54 @@ export function getUpstreamAuthorizeUrl(params: UpStreamAuthorizeUrlParams) {
 }
 
 export async function fetchUpstreamAuthToken({
-  client_id,
-  client_secret,
+  clientId,
+  clientSecret,
   code,
-  redirect_uri,
-  upstream_url,
+  redirectUri,
+  upstreamUrl,
+  grantType,
+  refreshToken,
 }: {
-  code: string | undefined
-  upstream_url: string
-  client_secret: string
-  redirect_uri: string
-  client_id: string
-}): Promise<[Record<string, string>, null] | [Record<string, null>, Response]> {
-  if (!code) {
-    return [
-      { access_token: null, refresh_token: null },
-      new Response("Missing code", { status: 400 }),
-    ]
+  clientId: string
+  clientSecret: string
+  grantType: "authorization_code" | "refresh_token"
+  refreshToken?: string
+  code?: string
+  redirectUri?: string
+  upstreamUrl: string
+}): Promise<OAuthTokenResponse> {
+  let reqBody
+  if (grantType === "authorization_code") {
+    reqBody = new URLSearchParams({
+      grant_type: grantType,
+      code: code || "",
+      redirect_uri: redirectUri || "",
+    })
+  } else if (grantType === "refresh_token") {
+    reqBody = new URLSearchParams({
+      grant_type: grantType,
+      refresh_token: refreshToken || "",
+    })
   }
 
-  const resp = await fetch(upstream_url, {
+  const resp = await fetch(upstreamUrl, {
     method: "POST",
     headers: {
       "Content-Type": "application/x-www-form-urlencoded",
-      Authorization: `Basic ${btoa(`${client_id}:${client_secret}`)}`,
+      Authorization: `Basic ${btoa(`${clientId}:${clientSecret}`)}`,
     },
-    body: new URLSearchParams({
-      redirect_uri,
-      grant_type: "authorization_code",
-      code,
-    }).toString(),
+    body: reqBody?.toString(),
   })
+
   if (!resp.ok) {
-    console.log(await resp.text())
-    return [
-      { access_token: null, refresh_token: null },
-      new Response("Failed to fetch access token", { status: 500 }),
-    ]
+    throw new HTTPException(500, { message: "Failed to fetch access token" })
   }
-  const body: { access_token: string; refresh_token: string } = await resp.json()
-  const { access_token, refresh_token } = body
-  if (!access_token || !refresh_token) {
-    return [
-      { access_token: null, refresh_token: null },
-      new Response("Missing access token", { status: 400 }),
-    ]
-  }
-  return [{ access_token, refresh_token }, null]
+
+  const body: OAuthTokenResponse = await resp.json()
+  const { access_token, refresh_token, expires_in, token_type, scope } = body
+
+  if (!access_token || !refresh_token || !expires_in)
+    throw new HTTPException(400, { message: "Missing access token" })
+
+  return { access_token, refresh_token, expires_in, token_type, scope }
 }

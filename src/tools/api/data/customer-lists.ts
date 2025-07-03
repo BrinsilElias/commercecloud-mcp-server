@@ -18,8 +18,7 @@ export const getCustomerListById = (server: McpServer, ocapi: OcapiClient) => {
       },
     },
     async ({ id }: { id: string }) => {
-      ocapi.setMethod("GET")
-      const customerList = await ocapi.call(DATA_API_TYPE, `/customer_lists/${id}`)
+      const customerList = await ocapi.get(DATA_API_TYPE, `/customer_lists/${id}`)
       return {
         content: [{ type: "text", text: JSON.stringify(customerList) }],
       }
@@ -43,8 +42,7 @@ export const getCustomerByCustomerNumber = (server: McpServer, ocapi: OcapiClien
       },
     },
     async ({ id, customerNumber }: { id: string; customerNumber: string }) => {
-      ocapi.setMethod("GET")
-      const customer = await ocapi.call(
+      const customer = await ocapi.get(
         DATA_API_TYPE,
         `/customer_lists/${id}/customers/${customerNumber}`,
       )

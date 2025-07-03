@@ -14,10 +14,9 @@ export const getCategories = (server: McpServer, ocapi: OcapiClient) => {
       },
     },
     async ({ ids }: { ids: string[] }) => {
-      ocapi.setMethod("GET")
       // Build path based on number of IDs
       const path = ids.length === 1 ? `/categories/${ids[0]}` : `/categories/(${ids.join(",")})`
-      const response = await ocapi.call(SHOP_API_TYPE, path)
+      const response = await ocapi.get(SHOP_API_TYPE, path)
       return {
         content: [{ type: "text", text: JSON.stringify(response) }],
       }

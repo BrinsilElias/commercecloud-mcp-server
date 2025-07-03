@@ -16,12 +16,8 @@ export const getOrderById = (server: McpServer, ocapi: OcapiClient) => {
       },
     },
     async ({ id }: { id: string }) => {
-      ocapi.setMethod("GET")
-      const order = await ocapi.call(SHOP_API_TYPE, `/orders/${id}`, {
-        auth: {
-          isAuthRequired: true,
-          grantType: "bm_user_grant",
-        },
+      const order = await ocapi.get(SHOP_API_TYPE, `/orders/${id}`, {
+        auth: true,
       })
       return {
         content: [{ type: "text", text: JSON.stringify(order) }],
@@ -46,13 +42,8 @@ export const orderSearch = (server: McpServer, ocapi: OcapiClient) => {
       },
     },
     async ({ fields, search_phrase }: { fields: string[]; search_phrase: string }) => {
-      ocapi.setMethod("POST")
-
-      const orders = await ocapi.call(SHOP_API_TYPE, `/order_search`, {
-        auth: {
-          isAuthRequired: true,
-          grantType: "bm_user_grant",
-        },
+      const orders = await ocapi.post(SHOP_API_TYPE, `/order_search`, {
+        auth: true,
         body: {
           query: {
             text_query: {

@@ -17,8 +17,7 @@ export const getContentById = (server: McpServer, ocapi: OcapiClient) => {
       },
     },
     async ({ id, libraryId }: { id: string; libraryId: string }) => {
-      ocapi.setMethod("GET")
-      const content = await ocapi.call(DATA_API_TYPE, `/libraries/${libraryId}/content/${id}`)
+      const content = await ocapi.get(DATA_API_TYPE, `/libraries/${libraryId}/content/${id}`)
       return {
         content: [{ type: "text", text: JSON.stringify(content) }],
       }
@@ -60,14 +59,10 @@ export const manageContentById = (server: McpServer, ocapi: OcapiClient) => {
       operation: "create" | "update"
     }) => {
       const body = content ? { ...content } : {}
-      ocapi.setMethod(operation === "create" ? "PUT" : "PATCH")
-      const resultContent = await ocapi.call(
-        DATA_API_TYPE,
-        `/libraries/${libraryId}/content/${id}`,
-        {
-          body,
-        },
-      )
+      const resultContent =
+        operation === "create"
+          ? await ocapi.put(DATA_API_TYPE, `/libraries/${libraryId}/content/${id}`, { body })
+          : await ocapi.patch(DATA_API_TYPE, `/libraries/${libraryId}/content/${id}`, { body })
       return {
         content: [{ type: "text", text: JSON.stringify(resultContent) }],
       }

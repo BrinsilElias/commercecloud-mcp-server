@@ -19,8 +19,6 @@ export const getProducts = (server: McpServer, ocapi: OcapiClient) => {
       },
     },
     async ({ ids, expand }: { ids: string | string[]; expand?: string[] }) => {
-      ocapi.setMethod("GET")
-
       // Handle both single ID and array of IDs
       const productIds = Array.isArray(ids) ? ids : [ids]
       const path =
@@ -28,7 +26,7 @@ export const getProducts = (server: McpServer, ocapi: OcapiClient) => {
           ? `/products/${productIds[0]}`
           : `/products/(${productIds.join(",")})`
 
-      const response = await ocapi.call(SHOP_API_TYPE, path, {
+      const response = await ocapi.get(SHOP_API_TYPE, path, {
         queryParams: {
           expand: expand || "",
         },

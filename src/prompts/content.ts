@@ -41,10 +41,16 @@ export const updateContentPrompt = (server: McpServer) => {
    - Based on the instructions provided, create a UI design
    - Responsive design, semantic HTML, clean typography
    - Hover effects, proper spacing, accessibility
-${designLink ? `  - Use the design from ${designLink} as a reference` : ""}
-4. **Update**: Use \`manage-content-by-id\` with new content
+${
+  designLink
+    ? `  - Use the \`get_figma_data\` tool to get the design data from ${designLink} as a reference`
+    : ""
+}
+4. **Preview**: Provide a preview of the code generated.
+5. **Permission**: Ask for permission to update the content asset.
+6. **Update**: Use \`manage-content-by-id\` with new content
    - Remove \`<head>\` tags, use \`<style>\` tags only
-   - Include all content in \`<body>\` structure`
+   - When updating content asset use the tags inside the body, no need to include the body tags.`
 
       return {
         messages: [

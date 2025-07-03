@@ -1,4 +1,3 @@
-import { env } from "@/utils/env"
 import { search } from "./search"
 import { OcapiClient } from "@/services/ocapi"
 import { manageProduct, getProduct } from "./products"
@@ -7,9 +6,7 @@ import { getCustomerListById, getCustomerByCustomerNumber } from "./customer-lis
 import { manageCustomObject, getCustomObject, customObjectSearch } from "./custom-objects"
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js"
 
-const ocapi = new OcapiClient(env)
-
-export const registerDataApiTools = (server: McpServer) => {
+export const registerDataApiTools = (server: McpServer, ocapi: OcapiClient) => {
   // Products API
   getProduct(server, ocapi)
   manageProduct(server, ocapi)

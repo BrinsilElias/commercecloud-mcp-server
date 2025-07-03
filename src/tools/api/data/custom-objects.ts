@@ -26,8 +26,7 @@ export const getCustomObject = (server: McpServer, ocapi: OcapiClient) => {
       object_type: string
       object_key: string
     }) => {
-      ocapi.setMethod("GET")
-      const customObject = await ocapi.call(
+      const customObject = await ocapi.get(
         DATA_API_TYPE,
         `/sites/${site_id}/custom_objects/${object_type}/${object_key}`,
       )
@@ -75,12 +74,18 @@ export const manageCustomObject = (server: McpServer, ocapi: OcapiClient) => {
       site_id: string
     }) => {
       const body = object ? { ...object } : {}
-      ocapi.setMethod(operation === "create" ? "PUT" : "PATCH")
-      const resultCustomObject = await ocapi.call(
-        DATA_API_TYPE,
-        `/sites/${site_id}/custom_objects/${object_type}/${object_key}`,
-        { body },
-      )
+      const resultCustomObject =
+        operation === "create"
+          ? await ocapi.put(
+              DATA_API_TYPE,
+              `/sites/${site_id}/custom_objects/${object_type}/${object_key}`,
+              { body },
+            )
+          : await ocapi.patch(
+              DATA_API_TYPE,
+              `/sites/${site_id}/custom_objects/${object_type}/${object_key}`,
+              { body },
+            )
       return {
         content: [
           {
@@ -117,8 +122,7 @@ export const customObjectSearch = (server: McpServer, ocapi: OcapiClient) => {
       fields: string[]
       search_phrase: string
     }) => {
-      ocapi.setMethod("POST")
-      const customObjects = await ocapi.call(
+      const customObjects = await ocapi.post(
         DATA_API_TYPE,
         `/custom_objects_search/${object_type}`,
         {

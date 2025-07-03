@@ -23,8 +23,7 @@ export const getProduct = (server: McpServer, ocapi: OcapiClient) => {
       },
     },
     async ({ id, expand }: { id: string; expand?: string[] }) => {
-      ocapi.setMethod("GET")
-      const response = await ocapi.call(DATA_API_TYPE, `/products/${id}`, {
+      const response = await ocapi.get(DATA_API_TYPE, `/products/${id}`, {
         queryParams: expand ? { expand } : {},
       })
       return {
@@ -61,12 +60,11 @@ export const manageProduct = (server: McpServer, ocapi: OcapiClient) => {
       product: Record<string, any>
       operation: "create" | "update"
     }) => {
-      ocapi.setMethod(operation === "create" ? "PUT" : "PATCH")
-
       const body = product ? { ...product } : {}
-      const response = await ocapi.call(DATA_API_TYPE, `/products/${id}`, {
-        body,
-      })
+      const response =
+        operation === "create"
+          ? await ocapi.put(DATA_API_TYPE, `/products/${id}`, { body })
+          : await ocapi.patch(DATA_API_TYPE, `/products/${id}`, { body })
       return {
         content: [{ type: "text", text: JSON.stringify(response) }],
       }

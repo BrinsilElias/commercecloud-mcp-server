@@ -26,8 +26,7 @@ export const search = (server: McpServer, ocapi: OcapiClient) => {
       fields: string[]
       search_phrase: string
     }) => {
-      ocapi.setMethod("POST")
-      const data = await ocapi.call(DATA_API_TYPE, `/${type}`, {
+      const data = await ocapi.post(DATA_API_TYPE, `/${type}`, {
         body: {
           query: {
             text_query: {

@@ -5,7 +5,7 @@ import { getUpstreamAuthorizeUrl, fetchUpstreamAuthToken } from "./helpers"
 
 import type { Context } from "hono"
 import type { AuthRequest } from "@cloudflare/workers-oauth-provider"
-import type { ApprovalDialogOptions } from "./types"
+import type { ApprovalDialogOptions, Props } from "./types"
 
 function sanitizeHtml(unsafe: string): string {
   if (typeof unsafe !== "string") {
@@ -262,15 +262,16 @@ export async function handleCallback(c: Context) {
     throw new HTTPException(400, { message: "Missing authorization code" })
   }
 
-  const [{ access_token, refresh_token }] = await fetchUpstreamAuthToken({
-    upstream_url: `https://account.demandware.com/dw/oauth2/access_token`,
-    client_id: c.env.SFCC_CLIENT_ID,
-    client_secret: c.env.SFCC_CLIENT_SECRET,
+  const { access_token, refresh_token, expires_in } = await fetchUpstreamAuthToken({
+    upstreamUrl: `https://account.demandware.com/dw/oauth2/access_token`,
+    clientId: c.env.SFCC_CLIENT_ID,
+    clientSecret: c.env.SFCC_CLIENT_SECRET,
     code,
-    redirect_uri: new URL("/callback", c.req.url).href,
+    redirectUri: new URL("/callback", c.req.url).href,
+    grantType: "authorization_code",
   })
 
-  if (!access_token) {
+  if (!access_token || !expires_in) {
     throw new HTTPException(502, { message: "Failed to obtain access token" })
   }
 
@@ -285,9 +286,11 @@ export async function handleCallback(c: Context) {
       loginTimestamp: timestamp,
     },
     props: {
-      access_token,
       email,
-    },
+      access_token,
+      refresh_token,
+      expires_in: Date.now() + Number(expires_in) * 1000,
+    } as Props,
   })
 
   return c.redirect(redirectTo, 302)

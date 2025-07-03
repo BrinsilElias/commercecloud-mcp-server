@@ -16,8 +16,7 @@ export const getContentsByIds = (server: McpServer, ocapi: OcapiClient) => {
       },
     },
     async ({ ids }: { ids: string[] }) => {
-      ocapi.setMethod("GET")
-      const contents = await ocapi.call(SHOP_API_TYPE, `/content/(${ids.join(",")})`)
+      const contents = await ocapi.get(SHOP_API_TYPE, `/content/(${ids.join(",")})`)
       return {
         content: [{ type: "text", text: JSON.stringify(contents) }],
       }
@@ -40,8 +39,7 @@ export const contentSearch = (server: McpServer, ocapi: OcapiClient) => {
     },
     async (options: Record<string, any>) => {
       const queryParams = options ? { ...options } : {}
-      ocapi.setMethod("GET")
-      const contents = await ocapi.call(SHOP_API_TYPE, `/content_search`, {
+      const contents = await ocapi.get(SHOP_API_TYPE, `/content_search`, {
         queryParams,
       })
       return {

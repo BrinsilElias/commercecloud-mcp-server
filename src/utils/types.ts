@@ -11,15 +11,13 @@ export interface OcapiRequestOptions {
   body?: Record<string, any>
   queryParams?: Record<string, string | string[]>
   headers?: Record<string, string>
-  auth?: {
-    isAuthRequired: boolean
-    grantType: GrantType
-  }
+  auth?: boolean
 }
 
 export interface OAuthTokenResponse {
   access_token: string
-  scope: string
+  refresh_token: string
+  scope?: string
   token_type: string
   expires_in: number
 }
@@ -43,3 +41,9 @@ export interface UpStreamAuthorizeUrlParams {
   response_type?: "code" | "id_token" | "code id_token"
 }
 
+export type Props = {
+  email: string
+  access_token: string
+  refresh_token: string
+  expires_in: number
+}

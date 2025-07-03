@@ -39,13 +39,17 @@
   --shadow-medium: rgba(0, 0, 0, 0.1);
 
   /* Gradients */
-  --gradient-primary: linear-gradient(135deg,
-      var(--color-primary-500) 0%,
-      var(--color-primary-600) 100%);
+  --gradient-primary: linear-gradient(
+    135deg,
+    var(--color-primary-500) 0%,
+    var(--color-primary-600) 100%
+  );
   --gradient-error: linear-gradient(135deg, var(--color-error-500) 0%, var(--color-error-600) 100%);
-  --gradient-error-hover: linear-gradient(135deg,
-      var(--color-error-600) 0%,
-      var(--color-error-700) 100%);
+  --gradient-error-hover: linear-gradient(
+    135deg,
+    var(--color-error-600) 0%,
+    var(--color-error-700) 100%
+  );
 }
 
 * {
