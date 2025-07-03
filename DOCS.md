@@ -2,7 +2,7 @@
 
 ## Overview
 
-The **Commerce Cloud MCP Server** is a TypeScript-based implementation of the Model Context Protocol (MCP) that bridges AI applications with Salesforce Commerce Cloud (SFCC). Built on **Cloudflare Workers** with **OAuth 2.0 authentication using Microsoft as the identity provider**, it provides a secure, scalable solution with comprehensive wrapper around SFCC's Open Commerce API (OCAPI), enabling authenticated AI systems to interact with Commerce Cloud data and operations.
+The **Commerce Cloud MCP Server** is a TypeScript-based implementation of the Model Context Protocol (MCP) that bridges AI applications with Salesforce Commerce Cloud (SFCC). Built on **Cloudflare Workers** with **OAuth 2.0 authentication using Salesforce as the identity provider**, it provides a secure, scalable solution with comprehensive wrapper around SFCC's Open Commerce API (OCAPI), enabling authenticated AI systems to interact with Commerce Cloud data and operations.
 
 ## What is MCP?
 
@@ -19,7 +19,7 @@ The Model Context Protocol (MCP) is a standardized way for AI applications to ac
 
 The server operates as a **Cloudflare Worker** with integrated **OAuth 2.0 authentication** using the following components:
 
-- **OAuth Provider** (`@cloudflare/workers-oauth-provider`) - Microsoft identity provider integration
+- **OAuth Provider** (`@cloudflare/workers-oauth-provider`) - Salesforce identity provider integration
 - **Server-Sent Events (SSE)** - Real-time communication via `/sse` endpoint
 - **Streamable HTTPS Transporter** - Standard MCP protocol via `/mcp` endpoint
 - **R2 Storage** - Hosts documentation resources and static assets
@@ -31,27 +31,26 @@ The server operates as a **Cloudflare Worker** with integrated **OAuth 2.0 authe
 ```
 src/
 ├── index.ts                    # Cloudflare Worker entry point with OAuth
-├── api/
-│   ├── shop/                   # Public storefront API (no auth)
+├── tools/api/
+│   ├── shop/                   # Public storefront API (OAuth authenticated)
 │   │   ├── products.ts         # Product operations
 │   │   ├── orders.ts           # Order operations
 │   │   ├── customers.ts        # Customer operations
 │   │   ├── baskets.ts          # Shopping basket operations
 │   │   ├── categories.ts       # Category operations
 │   │   └── content.ts          # Content operations
-│   ├── data/                   # Administrative API (OAuth required)
+│   ├── data/                   # Administrative API (OAuth authenticated)
 │   │   ├── products.ts         # Product management
 │   │   ├── custom-objects.ts   # Custom object CRUD
 │   │   ├── categories.ts       # Category management
 │   │   ├── jobs.ts             # Job execution
 │   │   ├── libraries.ts        # Content libraries
 │   │   └── customer-lists.ts   # Customer data
-│   └── resources/              # Documentation resources from R2
-│       └── index.ts            # R2 resource loader
+├── resources/                  # Documentation resources from R2
+│   └── index.ts                # R2 resource loader
 ├── services/
-│   ├── ocapi.ts                # HTTP client for OCAPI
-│   ├── access-token.ts         # Commerce Cloud OAuth token management
-│   └── oauth-handler.ts        # Microsoft OAuth flow handler
+│   ├── ocapi.ts                # HTTP client for OCAPI with OAuth token integration
+│   └── oauth-handler.ts        # Salesforce OAuth flow handler
 └── utils/
     ├── constants.ts            # Application constants
     ├── env.ts                  # Environment configuration
@@ -88,7 +87,7 @@ export default new OAuthProvider({
 
 1. Client initiates OAuth flow via `/authorize`
 2. User sees custom approval page with Commerce Cloud branding
-3. Redirect to Microsoft identity provider for authentication
+3. Redirect to Salesforce identity provider for authentication
 4. Callback to `/callback` with authorization code
 5. Token exchange and user info retrieval
 6. Session establishment in KV storage
@@ -96,17 +95,17 @@ export default new OAuthProvider({
 
 ### Two-Tier API Design
 
-The server implements a two-tier architecture:
+The server implements a two-tier architecture with unified authentication:
 
 1. **Shop API** (`src/api/shop/`)
    - Public-facing operations
-   - No authentication required
+   - Uses Salesforce OAuth access token
    - Customer storefront functionality
    - Product browsing, order tracking, content access
 
 2. **Data API** (`src/api/data/`)
    - Administrative operations
-   - OAuth authentication required
+   - Uses Salesforce OAuth access token
    - Backend management functionality
    - Product updates, custom objects, job execution
 
@@ -132,26 +131,20 @@ export const getProductById = (server: McpServer) => {
 
 ## Authentication Architecture
 
-### Dual OAuth Implementation
+### Single OAuth Implementation
 
-The server implements **two separate OAuth flows**:
+The server implements a **unified OAuth 2.0 flow** using Salesforce Commerce Cloud as the identity provider:
 
-#### 1. Microsoft OAuth 2.0 (MCP Client Authentication)
+#### Salesforce OAuth 2.0 (Unified Authentication)
 
-- **Purpose**: Authenticates MCP clients (AI applications) to access the MCP Server
-- **Provider**: Microsoft Azure Active Directory / Entra ID
+- **Purpose**: Authenticates MCP clients (AI applications) and provides access to all Commerce Cloud APIs
+- **Provider**: Salesforce Commerce Cloud Identity Provider
 - **Flow**: Authorization Code
 - **Endpoints**: `/authorize`, `/token`, `/callback`
 - **Storage**: KV namespace for session management
-- **Security**: Enhanced OpenID Connect with nonce validation and CSRF protection
-
-#### 2. Commerce Cloud OAuth 2.0 (SFCC API Access)
-
-- **Purpose**: Server-to-SFCC API authentication for Data API operations
-- **Provider**: Salesforce Commerce Cloud
-- **Flow**: Client Credentials
-- **Management**: Automatic token renewal and caching
-- **Scope**: SFCC OCAPI Data API access
+- **Security**: Enhanced OAuth 2.0 with state validation and CSRF protection
+- **Token Usage**: Single access token used for both MCP server access and all Commerce Cloud API calls
+- **Scope**: Full SFCC OCAPI access (both Shop and Data APIs)
 
 ## Configuration
 
@@ -199,12 +192,10 @@ id = "your-kv-namespace-id"
 SFCC_INSTANCE_URL = "https://your-instance.dx.commercecloud.salesforce.com"
 SFCC_SITE_ID = "your-site-id"
 SFCC_VERSION = "v25_6"
-SFCC_BM_USER_ID = "your-business-manager-user-id"
 SFCC_CLIENT_ID = "your-sfcc-client-id"
 
-# Microsoft OAuth Configuration
-MICROSOFT_CLIENT_ID = "your-azure-app-client-id"
-MICROSOFT_TENANT_ID = "your-azure-tenant-id"
+# OAuth Configuration (uses Commerce Cloud identity provider)
+SFCC_OAUTH_URL = "https://account.demandware.com/dwsso/oauth2/authorize"
 ```
 
 #### Secret Variables (use `wrangler secret put`)
@@ -212,10 +203,8 @@ MICROSOFT_TENANT_ID = "your-azure-tenant-id"
 ```bash
 # Commerce Cloud secrets
 wrangler secret put SFCC_CLIENT_SECRET
-wrangler secret put SFCC_BM_USER_SECURITY_TOKEN
 
-# Microsoft OAuth secret
-wrangler secret put MICROSOFT_CLIENT_SECRET
+# Note: The same SFCC_CLIENT_SECRET is used for both OAuth authentication and API access
 ```
 
 ### Cloudflare Resources Setup
@@ -275,13 +264,13 @@ The OAuth implementation includes few security measures:
 #### `POST /authorize`
 
 - **Purpose**: Process authorization approval
-- **Response**: Redirect to Microsoft identity provider
+- **Response**: Redirect to Salesforce identity provider
 - **Security**: State validation and secure redirect
 
 #### `GET|POST /callback`
 
-- **Purpose**: Handle Microsoft OAuth callback
-- **Security**: Comprehensive token validation and nonce verification
+- **Purpose**: Handle Salesforce OAuth callback
+- **Security**: Comprehensive token validation and state verification
 - **Response**: Session establishment and redirect
 
 #### `POST /token`
@@ -376,7 +365,7 @@ npm run dev
 The codebase follows these key patterns:
 
 1. **Cloudflare Worker Architecture** - Built for serverless edge computing
-2. **OAuth Provider Integration** - Comprehensive Microsoft identity provider integration
+2. **OAuth Provider Integration** - Comprehensive Salesforce identity provider integration
 3. **Durable Objects Integration** - Persistent state management
 4. **R2 Storage** - Dynamic resource loading from cloud storage
 5. **KV Session Management** - Secure OAuth session handling
