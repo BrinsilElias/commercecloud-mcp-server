@@ -53,5 +53,4 @@ export default new OAuthProvider({
   authorizeEndpoint: "/authorize",
   tokenEndpoint: "/token",
   clientRegistrationEndpoint: "/register",
-  accessTokenTTL: 1799,
 })

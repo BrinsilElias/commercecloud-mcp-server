@@ -44,11 +44,6 @@ app.post("/authorize", async (c) => {
 
 app.get("/callback", handleCallback)
 
-// Catch-all route for unmatched paths - 404 Page Not Found
-app.all("*", (c) => {
-  return renderErrorPage(c, 404)
-})
-
 app.onError((err, c) => {
   console.error("OAuth Error:", {
     error: err.message,

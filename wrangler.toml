@@ -21,6 +21,7 @@ SFCC_INSTANCE_URL = "https://zzra-078.dx.commercecloud.salesforce.com"
 SFCC_DEFAULT_SITE_ID = "RefArch"
 SFCC_VERSION = "v25_6"
 SFCC_CLIENT_ID = "b865b2d5-761b-4240-b7e5-f686ec773eed"
+# npx wrangler secret put SFCC_CLIENT_SECRET
 
 # R2 bucket for MCP server resources
 [[r2_buckets]]

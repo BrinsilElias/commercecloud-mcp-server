@@ -1,5 +1,4 @@
 import { getProducts } from "./products"
-import { getCategories } from "./categories"
 import { OcapiClient } from "@/services/ocapi"
 import { orderSearch, getOrderById } from "./orders"
 import { getContentsByIds, contentSearch } from "./content"
@@ -16,7 +15,4 @@ export const registerShopApiTools = (server: McpServer, ocapi: OcapiClient) => {
   // Content API
   getContentsByIds(server, ocapi)
   contentSearch(server, ocapi)
-
-  // Categories API
-  getCategories(server, ocapi)
 }
