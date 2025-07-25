@@ -1,21 +1,20 @@
-import type {
-  ApiType,
-  OcapiClientEnv,
-  OcapiRequestOptions,
-} from "../utils/types"
+import type { ApiType, OcapiClientEnv, OcapiRequestOptions } from "../utils/types"
 import { createOAuthToken } from "./access-token"
 import { DATA_API_TYPE } from "../utils/constants"
 
 export class OcapiClient {
+  private instanceUrl: string
+  private version: string
+  private clientId: string
+  private defaultSiteId: string
   private env: OcapiClientEnv
 
   constructor(env: OcapiClientEnv) {
     this.env = env
-  }
-
-  private buildBaseUrl(apiType: ApiType): string {
-    const { SFCC_INSTANCE_URL, SFCC_SITE_ID, SFCC_VERSION } = this.env
-    return `${SFCC_INSTANCE_URL}/s/${apiType === "shop" ? SFCC_SITE_ID : "-"}/dw/${apiType}/${SFCC_VERSION}`
+    this.version = env.SFCC_VERSION
+    this.clientId = env.SFCC_CLIENT_ID
+    this.defaultSiteId = env.SFCC_DEFAULT_SITE_ID
+    this.instanceUrl = env.SFCC_INSTANCE_URL
   }
 
   private buildUrl(
@@ -23,8 +22,8 @@ export class OcapiClient {
     path: string,
     queryParams?: Record<string, string | string[]>,
   ): string {
-    const baseUrl = this.buildBaseUrl(apiType) + path
-    const url = new URL(baseUrl)
+    const baseUrl = `${this.instanceUrl}/s/${apiType === "shop" ? this.defaultSiteId : "-"}/dw/${apiType}/${this.version}`
+    const url = new URL(baseUrl + path)
 
     if (queryParams) {
       Object.entries(queryParams).forEach(([key, value]) => {
@@ -36,12 +35,10 @@ export class OcapiClient {
     return url.toString()
   }
 
-  private createHeaders(
-    additionalHeaders?: Record<string, string>,
-  ): Record<string, string> {
+  private createHeaders(additionalHeaders?: Record<string, string>): Record<string, string> {
     return {
       "Content-Type": "application/json",
-      "x-dw-client-id": this.env.SFCC_CLIENT_ID,
+      "x-dw-client-id": this.clientId,
       ...additionalHeaders,
     }
   }
@@ -78,51 +75,29 @@ export class OcapiClient {
 
     if (!response.ok) {
       const error = await response.json()
-      throw new Error(
-        `OCAPI request failed: ${response.status} \n ${JSON.stringify(error)}`,
-      )
+      throw new Error(`OCAPI request failed: ${response.status} \n ${JSON.stringify(error)}`)
     }
 
     return response.json()
   }
 
-  get(
-    apiType: ApiType,
-    path: string,
-    options?: Omit<OcapiRequestOptions, "method">,
-  ): Promise<any> {
+  get(apiType: ApiType, path: string, options?: OcapiRequestOptions): Promise<any> {
     return this.httpClient(apiType, path, { ...options })
   }
 
-  post(
-    apiType: ApiType,
-    path: string,
-    options?: Omit<OcapiRequestOptions, "method">,
-  ): Promise<any> {
+  post(apiType: ApiType, path: string, options?: OcapiRequestOptions): Promise<any> {
     return this.httpClient(apiType, path, { ...options, method: "POST" })
   }
 
-  put(
-    apiType: ApiType,
-    path: string,
-    options?: Omit<OcapiRequestOptions, "method">,
-  ): Promise<any> {
+  put(apiType: ApiType, path: string, options?: OcapiRequestOptions): Promise<any> {
     return this.httpClient(apiType, path, { ...options, method: "PUT" })
   }
 
-  delete(
-    apiType: ApiType,
-    path: string,
-    options?: Omit<OcapiRequestOptions, "method">,
-  ): Promise<any> {
+  delete(apiType: ApiType, path: string, options?: OcapiRequestOptions): Promise<any> {
     return this.httpClient(apiType, path, { ...options, method: "DELETE" })
   }
 
-  patch(
-    apiType: ApiType,
-    path: string,
-    options?: Omit<OcapiRequestOptions, "method">,
-  ): Promise<any> {
+  patch(apiType: ApiType, path: string, options?: OcapiRequestOptions): Promise<any> {
     return this.httpClient(apiType, path, { ...options, method: "PATCH" })
   }
 }

@@ -24,7 +24,6 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "@egoist/prettier-config": "1.0.0",
     "prettier": "3.5.3",
     "tsup": "8.5.0",
     "typescript": "5.8.3"
